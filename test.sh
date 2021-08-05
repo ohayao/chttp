@@ -1,1 +1,1 @@
-gcc main.c -o curlTest -lcurl && ./curlTest
+gcc main.c -o curlTest -lcurl

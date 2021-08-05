@@ -26,33 +26,6 @@ static size_t WriteMemoryCallback(void *contents, size_t size, size_t nmemb, voi
     return realsize;
 }
 
-char *str_replace(char *src, char *rep, char *with)
-{
-    char *index;
-    char *result, *tmp, *next;
-    int count = 0, len_front;
-    int len_with = strlen(with);
-    int len_rep = strlen(rep);
-    next = src;
-    for (count = 0; tmp = strstr(next, rep); ++count)
-    {
-        next = tmp + len_rep;
-    }
-    tmp = result = (char *)malloc(strlen(src) + count * (len_rep - len_with) + 1);
-    if (!result)
-        return NULL;
-    while (count--)
-    {
-        index = strstr(src, rep);
-        len_front = index - src;
-        tmp = strncpy(tmp, src, len_front) + len_front;
-        tmp = strcpy(tmp, with) + len_with;
-        src += len_front + len_rep; // move to next "end of rep"
-    }
-    strcpy(tmp, src);
-    return result;
-}
-
 void aCurl()
 {
     struct MemoryStruct chunk;
@@ -68,10 +41,16 @@ void aCurl()
         return;
     }
     char *url = "https://xxx.domain.com/post";
-    char *postData = "";
+    char *postData = "{\"timestamp\":1627974279,\"csr\":\"-----BEGIN CERTINu6GY\\n-----END ---\\n\"}";
+
+    struct curl_slist *header = NULL;
+    header = curl_slist_append(header, "token: DVIc3StJ7Jxzj6BSy3wtwUVk4rn6U7xestkxqzCtfq8=");
+    header = curl_slist_append(header, "content-type: application/json");
+
     curl_easy_setopt(curl, CURLOPT_URL, url);
     curl_easy_setopt(curl, CURLOPT_POST, 1);
     curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postData);
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, header);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&chunk);
 
